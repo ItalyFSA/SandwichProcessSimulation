@@ -1,0 +1,32 @@
+// designer
+	-get indredients
+// implementer
+	-spread 2x
+	-put sandwich together
+	-cut
+// tester
+	-eats
+
+# Run through this process per how many sandwiches there are
+
+// manager
+	# 1 manager per 30 people
+
+
+Configurable
+NumSandwich|percentChanceItllHappen
+budget
+
+
+Return 
+Staffing chart
+Is a million enough for a year?
+How much over or under?
+
+How much money are you spending on overhead?
+-On going expense to operate the business
+
+** two different simulations
+-one perfect
+-one with failure rate of 10%
+
