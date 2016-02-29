@@ -6,6 +6,7 @@ class Implementer extends Employee
 		wage = 125;
 		maxHoursWorked = 6;
 		maxHoursPaid = 8;
+		outsourced = false;
 	}
 
 	private double stack()
@@ -31,5 +32,10 @@ class Implementer extends Employee
 	public int getSalary()
 	{
 		return wage * maxHoursPaid * 5 * 52;
+	}
+
+	public void setOutsourced()
+	{
+		outsourced = true;
 	}
 }

@@ -5,6 +5,7 @@ class Tester extends Employee
 		wage = 75;
 		maxHoursWorked = 6;
 		maxHoursPaid = 8;
+		outsourced = false;
 	}
 
 	public double eatSandwich()
@@ -17,5 +18,10 @@ class Tester extends Employee
 	public int getSalary()
 	{
 		return wage * maxHoursPaid * 5 * 52;
+	}
+
+	public void setOutsourced()
+	{
+		outsourced = true;
 	}
 }

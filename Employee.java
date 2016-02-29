@@ -3,6 +3,7 @@ class Employee
 	public int wage;
 	public int maxHoursWorked;
 	public int maxHoursPaid;
+	public boolean outsourced;
 
 	public int getSalary()
 	{
