@@ -8,9 +8,9 @@ class Implementer extends Employee
 		maxHoursPaid = 8;
 	}
 
-	private double spreadPeanutButter()
+	private double stack()
 	{
-		return 17.8;
+		return 3;
 	}
 
 	private double combineSlices()
@@ -20,12 +20,12 @@ class Implementer extends Employee
 
 	private double cutSandwich()
 	{
-		return  7.9;
+		return  3;
 	}
 
 	public double makeSandwich()
 	{
-		return ((spreadPeanutButter() * 2) + combineSlices() + cutSandwich());
+		return (stack() + combineSlices() + cutSandwich());
 	}
 
 	public int getSalary()

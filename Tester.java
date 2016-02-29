@@ -9,8 +9,9 @@ class Tester extends Employee
 
 	public double eatSandwich()
 	{
-		// time taken up is 165.6 seconds
-		return 165.6;
+		// time taken up is 41.4 seconds
+		// cut time down to 1/4 of the original time
+		return 41.4;
 	}
 
 	public int getSalary()
