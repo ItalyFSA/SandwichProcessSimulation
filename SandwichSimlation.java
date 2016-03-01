@@ -29,13 +29,27 @@ class SandwichSimlation
 		// testing getting info from file
 		u.getInfoTest();
 
-		// testing calculating total number of sandwiches without counting errors
-		u.calcTotalSandwichesWoErrorTest();
+		// testing calculating total number of sandwiches without counting errors Local
+		u.calcTotalSandwichesWoErrorLocalTest();
 
-		// testing calculating total number of sandwiches with counting errors
-		u.calcTotalSandwichesWithErrorTest();
+		// testing calculating total number of sandwiches with counting errors Local
+		u.calcTotalSandwichesWithErrorLocalTest();
 
-		// testing calculating salaries
-		u.calculateSalariesTest();
+		// testing calculating total number of sandwiches without counting errors offshore
+		u.calcTotalSandwichesWoErrorOffshoreTest();
+
+		// testing calculating total number of sandwiches with counting errors offshore
+		u.calcTotalSandwichesWithErrorOffshoreTest();
+
+		// testing calculating salaries local
+		u.calculateSalariesLocalTest();
+
+		// testing calculating salaries off shore
+		u.calculateSalariesOffshoreTest();
+
+		// testing calculating number of teams per number of sandwiches
+		u.calculateTeamTest();
+
+		System.out.println("END OF TESTS");
 	}
 }

@@ -45,10 +45,6 @@ class Simulation
 					_totalSandwiches.add(Double.parseDouble(splitLine[0]));
 					_percents.add(Double.parseDouble(splitLine[1]));
 					System.out.println("Order " + Double.parseDouble(splitLine[0]) + " " + Double.parseDouble(splitLine[1]));
-					/*System.out.println("Order\n[0]: " + splitLine[0]);
-					System.out.println("[0] Parsed Double: " + Double.parseDouble(splitLine[0]));
-					System.out.println("[1]: " + splitLine[1]);
-					System.out.println("[1] Parsed Double: " + Double.parseDouble(splitLine[1]));*/
 				}
 			}
 			br.close();
@@ -71,7 +67,7 @@ class Simulation
 		}
 	}
 
-	public int calcTotalSandwichesWoError()
+	public int calcTotalSandwichesLocal(boolean error)
 	{
 		int total = 0;
 		for (int i = 0; i < _totalSandwiches.size(); ++i)
@@ -85,10 +81,12 @@ class Simulation
 				total += (numSandwiches * percentageMade);
 			}
 		}
+		if (error)
+			total += (total * .1);
 		return total;
 	}
 
-	public int calcTotalSandwichesWoErrorOutsource()
+	public int calcTotalSandwichesOffshore(boolean error)
 	{
 		int total = 0;
 		for (int i = 0; i < _totalSandwiches.size(); ++i)
@@ -102,47 +100,11 @@ class Simulation
 				total += (numSandwiches * percentageMade);
 			}
 		}
+		if (error)
+			total += (total * .3);
 		return total;
 	}
 
-	public int calcTotalSandwichesWithError()
-	{
-		int total = 0;
-		for (int i = 0; i < _totalSandwiches.size(); ++i)
-		{
-		    Double numSandwiches = _totalSandwiches.get(i);
-		    Double percentageMade = _percents.get(i);
-		    if (percentageMade >= 1.0)
-		    {
-			    // add to total percentage of sandwiches made 
-			    System.out.println("Sandwiches " + numSandwiches + " Percent " + percentageMade);
-				total += (numSandwiches * percentageMade);
-			}
-		}
-		// accounting for 10 percent error
-		total += (total * .1);
-		return total;
-	}
-
-	public int calcTotalSandwichesWithErrorOutsource()
-	{
-		int total = 0;
-		for (int i = 0; i < _totalSandwiches.size(); ++i)
-		{
-		    Double numSandwiches = _totalSandwiches.get(i);
-		    Double percentageMade = _percents.get(i);
-		    if (percentageMade < 1.0)
-		    {
-			    // add to total percentage of sandwiches made 
-			    System.out.println("Sandwiches " + numSandwiches + " Percent " + percentageMade);
-				total += (numSandwiches * percentageMade);
-			}
-		}
-		// accounting for 10 percent error
-		total += (total * .3);
-		return total;
-	}
-	
 	public double makeSandwiches(int numTeams, int totalSandwiches)
 	{
 		double totalTimeSeconds = 0.0;
@@ -171,7 +133,7 @@ class Simulation
 		return totalTimeYears;
 	}
 
-	public int calculateSalaries(int numTeams)
+	public double calculateSalaries(int numTeams, boolean offShore)
 	{
 		Designer d = new Designer();
 		int designerSalary = d.getSalary();
@@ -191,49 +153,28 @@ class Simulation
 		int managerSalary = m.getSalary();
 		System.out.println("Manager Salary: " + managerSalary);
 
-		int totalOverhead = (managerSalary * numManagers) + (designerSalary * numTeams) + 
+		double totalOverhead = 0.0;
+		if (!offShore)
+			totalOverhead = (managerSalary * numManagers) + (designerSalary * numTeams) + 
 			(implementerSalary * numTeams) + (testerSalary * numTeams);
-
-		return totalOverhead;
-	}
-
-	public double calculateSalariesOffshore(int numTeams)
-	{
-		Designer d = new Designer();
-		int designerSalary = d.getSalary();
-		System.out.println("Designer Salary: " + designerSalary);
-
-		Implementer i = new Implementer();
-		int implementerSalary = i.getSalary();
-		System.out.println("Implementer Salary: " + implementerSalary);
-
-		Tester t = new Tester();
-		int testerSalary = t.getSalary();
-		System.out.println("Tester Salary: " + testerSalary);
-
-		Manager m = new Manager();
-		int numManagers = m.calcNumManagers(numTeams * 3);
-		System.out.println("Number Managers: " + numManagers);
-		int managerSalary = m.getSalary();
-		System.out.println("Manager Salary: " + managerSalary);
-
-		double totalOverhead = ((managerSalary * numManagers) + (designerSalary * numTeams) + 
+		else
+			totalOverhead = ((managerSalary * numManagers) + (designerSalary * numTeams) + 
 			(implementerSalary * numTeams) + (testerSalary * numTeams)) * 0.25;
 
 		return totalOverhead;
 	}
 
-	public int localSim(int totalNumSandwichesNeeded)
+	public int calculateTeamNumber(int totalNumSandwichesNeeded)
 	{
 		// running local simulation
 		// start with one team
-		int numTeamsLocal = 1;
+		int numTeams = 1;
 
 		boolean simulationRunningLocal = true;
 		while (simulationRunningLocal)
 		{
 			// see how long it takes to make the sandwiches 
-			double totalTime = makeSandwiches(numTeamsLocal,totalNumSandwichesNeeded);
+			double totalTime = makeSandwiches(numTeams,totalNumSandwichesNeeded);
 			if (totalTime < 1.0)
 			{
 				// if they made all of them within the year done with simulation
@@ -242,116 +183,34 @@ class Simulation
 			else
 			{
 				// otherwise increase the number of people
-				numTeamsLocal++;
-				//System.out.println("Number of teams: " + numTeamsLocal);
+				numTeams++;
+				//System.out.println("Number of teams: " + numTeams);
 			}
 		}
 		// found optimal teams for making all sandwiches
-		System.out.println("Optimal number of teams Local: " + numTeamsLocal);
+		System.out.println("Optimal number of teams: " + numTeams);
 
-		// print info to a file output info
-		int overheadLocal = calculateSalaries(numTeamsLocal);
-		System.out.println("Overhead Local: " + overheadLocal);
-
-		return overheadLocal;
+		return numTeams;
 	}
 
-	public double offshoreSim(int totalNumSandwichesNeededOutsource)
+	public double calcOverHead(int totalNumSandwichesNeeded, boolean offshore)
 	{
-		// running off shore simulation
-		// start with one team
-		int numTeamsOffshore = 1;
+		if (offshore)
+			System.out.println("\nOffshore Calculations");
+		else
+			System.out.println("\nLocal Calculations");
 
-		boolean simulationRunningOffshore = true;
-		while (simulationRunningOffshore)
-		{
-			// see how long it takes to make the sandwiches 
-			double totalTimeOffshore = makeSandwiches(numTeamsOffshore,totalNumSandwichesNeededOutsource);
-			if (totalTimeOffshore < 1.0)
-			{
-				// if they made all of them within the year done with simulation
-				simulationRunningOffshore = false;
-			}
-			else
-			{
-				// otherwise increase the number of people
-				numTeamsOffshore++;
-				//System.out.println("Number of teams: " + numTeamsOffshore);
-			}
-		}
-		// found optimal teams for making all sandwiches
-		System.out.println("Optimal number of teams Offshore: " + numTeamsOffshore);
+		int numTeams = calculateTeamNumber(totalNumSandwichesNeeded);
 
 		// print info to a file output info
-		double overheadOffshore = calculateSalariesOffshore(numTeamsOffshore);
-		System.out.println("Overhead Off shore: " + overheadOffshore);
-
-		return overheadOffshore;
-	}
-
-	public int localSimError(int totalNumSandwichesNeeded)
-	{
-		// start with one team
-		int numTeamsLocal = 1;
-
-		boolean simulationRunning = true;
-		while (simulationRunning)
-		{
-			// see how long it takes to make the sandwiches 
-			double totalTime = makeSandwiches(numTeamsLocal,totalNumSandwichesNeeded);
-			if (totalTime < 1.0)
-			{
-				// if they made all of them within the year done with simulation
-				simulationRunning = false;
-			}
-			else
-			{
-				// otherwise increase the number of people
-				numTeamsLocal++;
-				//System.out.println("Number of teams: " + numTeamsLocal);
-			}
-		}
-		// found optimal teams for making all sandwiches
-		System.out.println("Optimal number of teams Local: " + numTeamsLocal);
-
-		// print info to a file output info
-		int overhead = calculateSalaries(numTeamsLocal);
+		double overhead = 0.0;
+		if (!offshore)
+			overhead = calculateSalaries(numTeams, false);
+		else
+			overhead = calculateSalaries(numTeams, true);
 		System.out.println("Overhead: " + overhead);
 
 		return overhead;
-	}
-
-	public double offshoreSimError(int totalNumSandwichesNeededOutsource)
-	{
-		// running off shore simulation
-		// start with one team
-		int numTeamsOffshore = 1;
-
-		boolean simulationRunningOffshore = true;
-		while (simulationRunningOffshore)
-		{
-			// see how long it takes to make the sandwiches 
-			double totalTimeOffshore = makeSandwiches(numTeamsOffshore,totalNumSandwichesNeededOutsource);
-			if (totalTimeOffshore < 1.0)
-			{
-				// if they made all of them within the year done with simulation
-				simulationRunningOffshore = false;
-			}
-			else
-			{
-				// otherwise increase the number of people
-				numTeamsOffshore++;
-				//System.out.println("Number of teams: " + numTeamsOffshore);
-			}
-		}
-		// found optimal teams for making all sandwiches
-		System.out.println("Optimal number of teams Offshore: " + numTeamsOffshore);
-
-		// print info to a file output info
-		double overheadOffshore = calculateSalariesOffshore(numTeamsOffshore);
-		System.out.println("Overhead Off shore: " + overheadOffshore);
-
-		return overheadOffshore;
 	}
 
 	public void runPerfect()
@@ -361,14 +220,14 @@ class Simulation
 		getInfo();
 
 		// get total sandwiches needed without error
-		int totalNumSandwichesNeeded = calcTotalSandwichesWoError();
-		int totalNumSandwichesNeededOutsource = calcTotalSandwichesWoErrorOutsource();
+		int totalNumSandwichesNeeded = calcTotalSandwichesLocal(false);
+		int totalNumSandwichesNeededOutsource = calcTotalSandwichesOffshore(false);
 
 		System.out.println("Total Sandwiches Needed Local: " + totalNumSandwichesNeeded);
 		System.out.println("Total Sandwiches Needed Off shore: " + totalNumSandwichesNeededOutsource);
 
-		int overheadLocal = localSim(totalNumSandwichesNeeded);
-		double overheadOffshore = offshoreSim(totalNumSandwichesNeededOutsource);
+		double overheadLocal = calcOverHead(totalNumSandwichesNeeded, false);
+		double overheadOffshore = calcOverHead(totalNumSandwichesNeededOutsource, true);
 
 		System.out.println("Overhead Total: " + (overheadLocal + overheadOffshore));
 	}
@@ -380,16 +239,15 @@ class Simulation
 		getInfo();
 
 		// get total sandwiches needed with error
-		int totalNumSandwichesNeeded = calcTotalSandwichesWithError();
-		int totalNumSandwichesNeededOutsource = calcTotalSandwichesWithErrorOutsource();
+		int totalNumSandwichesNeeded = calcTotalSandwichesLocal(true);
+		int totalNumSandwichesNeededOutsource = calcTotalSandwichesOffshore(true);
 
 		System.out.println("Total Sandwiches Needed Local: " + totalNumSandwichesNeeded);
 		System.out.println("Total Sandwiches Needed Off shore: " + totalNumSandwichesNeededOutsource);
 
-		int overheadLocal = localSimError(totalNumSandwichesNeeded);
-		double overheadOffshore = offshoreSimError(totalNumSandwichesNeededOutsource);
+		double overheadLocal = calcOverHead(totalNumSandwichesNeeded, false);
+		double overheadOffshore = calcOverHead(totalNumSandwichesNeededOutsource, true);
 
 		System.out.println("Overhead Total: " + (overheadLocal + overheadOffshore));
 	}
 }
-
